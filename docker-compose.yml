@@ -1,0 +1,21 @@
+# Local development database. Production uses Neon (see docs/08-environments-and-deployment.md).
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: butce-db
+    environment:
+      POSTGRES_USER: butce
+      POSTGRES_PASSWORD: butce
+      POSTGRES_DB: butce
+      TZ: UTC
+    ports:
+      - "5433:5432"
+    volumes:
+      - butce-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U butce -d butce"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  butce-db-data:

@@ -1,0 +1,13 @@
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
+  "@parcel/watcher": false
+  "@swc/core": false
+  esbuild: false
+  cpu-features: false
+  protobufjs: false
+  ssh2: false
+minimumReleaseAgeExclude:
+  - react-dom@19.3.1
+  - react@19.3.1
+  - resend@6.33.0
