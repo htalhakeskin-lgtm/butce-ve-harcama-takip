@@ -62,7 +62,11 @@ Doğrulanmış bir deneme hesabı ve son 6 aya yayılmış örnek veri (hesaplar
 
 Kendi hesabınızı açarken şifre en az 10 karakter olmalı ve bilinen veri sızıntılarında geçmemelidir (ör. `Password123!` reddedilir).
 
-## Müşteriye demo bağlantısı (ücretsiz, hesapsız)
+## Canlı demo
+
+Kalıcı demo: **https://butce-demo.vercel.app** (Vercel Hobby + Neon Free, Frankfurt). Giriş sayfası deneme hesabıyla dolu gelir. Kod değişikliğinden sonra yeniden yayınlamak için `npx vercel deploy --prod`; demo verisini baştan kurmak için `DATABASE_URL=<Neon doğrudan adresi> pnpm db:seed --allow-remote`.
+
+## Müşteriye geçici demo bağlantısı (tünel, hesapsız)
 
 ```bash
 pnpm demo:share

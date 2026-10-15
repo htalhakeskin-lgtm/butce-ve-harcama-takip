@@ -51,3 +51,11 @@ next-env.d.ts
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# vercel cli link
+.vercel
+
+# agent skills installed by marketplace integrations
+/.agents/
+/.claude/skills/
+skills-lock.json

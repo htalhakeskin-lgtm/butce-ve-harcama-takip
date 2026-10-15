@@ -1,0 +1,14 @@
+# Never upload local secrets or build/test artefacts to Vercel
+.env*
+!.env.example
+.dev-mail
+.next
+.next-e2e
+.next-demo
+node_modules
+test-results
+playwright-report
+.agents
+.claude
+skills-lock.json
+standards_ornek
