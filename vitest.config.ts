@@ -4,9 +4,9 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
 const alias = {
-  "@": path.resolve(__dirname, "src"),
+  "@": path.resolve(import.meta.dirname, "src"),
   // `server-only` throws outside the React Server Components runtime; tests run in plain Node.
-  "server-only": path.resolve(__dirname, "tests/stubs/server-only.ts"),
+  "server-only": path.resolve(import.meta.dirname, "tests/stubs/server-only.ts"),
 };
 
 export default defineConfig({

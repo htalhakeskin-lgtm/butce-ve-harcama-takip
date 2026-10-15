@@ -1,0 +1,56 @@
+# Weekly encrypted logical backup (NFR-17): pg_dump -> age (public key) -> Cloudflare R2, kept 8 weeks.
+# Needs: PRODUCTION_DATABASE_URL, BACKUP_AGE_PUBLIC_KEY, R2_ACCOUNT_ID, R2_ACCESS_KEY_ID,
+#        R2_SECRET_ACCESS_KEY, R2_BACKUP_BUCKET. Restore steps: docs/09-operations.md.
+name: Backup
+
+on:
+  schedule:
+    - cron: "30 1 * * 1" # Mondays 01:30 UTC (04:30 Istanbul)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+      AGE_PUBLIC_KEY: ${{ secrets.BACKUP_AGE_PUBLIC_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: auto
+      R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+      BUCKET: ${{ secrets.R2_BACKUP_BUCKET }}
+    steps:
+      - name: Skip until service accounts exist
+        id: guard
+        run: |
+          if [ -z "$DATABASE_URL" ] || [ -z "$AGE_PUBLIC_KEY" ] || [ -z "$BUCKET" ]; then
+            echo "Backup secrets are not configured yet; skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Install PostgreSQL 17 client and age
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSo /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17 age
+      - name: Dump, encrypt, upload
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          FILE="butce-$(date -u +%Y-%m-%d).dump.age"
+          /usr/lib/postgresql/17/bin/pg_dump --format=custom --no-owner "$DATABASE_URL" | age -r "$AGE_PUBLIC_KEY" > "$FILE"
+          aws s3 cp "$FILE" "s3://$BUCKET/weekly/$FILE" --endpoint-url "$R2_ENDPOINT"
+      - name: Remove backups older than 8 weeks
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          CUTOFF=$(date -u -d '56 days ago' +%Y-%m-%d)
+          aws s3 ls "s3://$BUCKET/weekly/" --endpoint-url "$R2_ENDPOINT" | awk '{print $4}' | while read -r f; do
+            d=$(echo "$f" | sed -E 's/butce-([0-9-]+)\.dump\.age/\1/')
+            if [[ "$d" < "$CUTOFF" ]]; then aws s3 rm "s3://$BUCKET/weekly/$f" --endpoint-url "$R2_ENDPOINT"; fi
+          done

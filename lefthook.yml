@@ -1,0 +1,14 @@
+# Commit hooks (git standard §8). Installed by `pnpm exec lefthook install`.
+pre-commit:
+  parallel: true
+  jobs:
+    - name: format
+      glob: "*.{ts,tsx,mjs,json,css,yml,yaml}"
+      run: pnpm exec prettier --check {staged_files}
+    - name: lint
+      glob: "*.{ts,tsx}"
+      run: pnpm exec eslint {staged_files}
+commit-msg:
+  jobs:
+    - name: conventional commit
+      run: pnpm exec commitlint --edit {1}

@@ -1,0 +1,59 @@
+# Release pipeline (ci standard §6): migrations first, then the code.
+# Needs repository secrets once the client's service accounts exist (A-06):
+#   PRODUCTION_DATABASE_URL (direct, unpooled), VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+# and the repository variable PRODUCTION_URL for the health check.
+name: Deploy
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [PR]
+    branches: [main]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Skip until service accounts exist
+        id: guard
+        run: |
+          if [ -z "$DATABASE_URL" ] || [ -z "$VERCEL_TOKEN" ]; then
+            echo "Deployment secrets are not configured yet; skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.guard.outputs.skip != 'true'
+      - uses: pnpm/action-setup@v4
+        if: steps.guard.outputs.skip != 'true'
+      - uses: actions/setup-node@v4
+        if: steps.guard.outputs.skip != 'true'
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+        if: steps.guard.outputs.skip != 'true'
+      - name: Apply migrations to production
+        if: steps.guard.outputs.skip != 'true'
+        run: pnpm db:migrate
+      - name: Deploy to Vercel (production)
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          pnpm dlx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          pnpm dlx vercel build --prod --token="$VERCEL_TOKEN"
+          pnpm dlx vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+      - name: Health check
+        if: steps.guard.outputs.skip != 'true' && vars.PRODUCTION_URL != ''
+        run: curl --fail --retry 5 --retry-delay 5 "${{ vars.PRODUCTION_URL }}/api/health"

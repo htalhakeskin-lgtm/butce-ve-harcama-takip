@@ -1,6 +1,7 @@
 # Bütçe ve Harcama Takip Uygulaması — Proje Planı
 
-> **Durum:** v1.1 · **Son güncelleme:** 2026-10-15
+> **Durum:** v1.2 · **Son güncelleme:** 2026-10-15
+> **Not:** Faz 0'da bu plan [`docs/`](docs/README.md) altına bölündü. Kaynak artık oradaki belgelerdir; bu dosya kararların ve fazların özeti olarak kalır.
 > **Kararlar:** [Bölüm 17](#17-kararlar) · **Açık konular:** [Bölüm 16](#16-riskler-ve-açık-konular)
 
 ## İçindekiler
@@ -2210,5 +2211,6 @@ Devirden sonra geliştiricinin bildiği tüm gizli bilgiler döndürülür ve de
 
 | Tarih | Versiyon | Değişiklik |
 |---|---|---|
+| 2026-10-15 | v1.2 | Plan `docs/` altına bölündü (F0-02). Faz 0 ve Faz 1 tamamlandı; uygulamada plandan sapmalar ilgili standartların "Uygulamadaki durum" bölümüne yazıldı. |
 | 2026-10-15 | v1.1 | Açık konular güncellendi: alan adı, uygulama adı ve servis hesapları ayarlanabilir kalır (K-18); A-07 kaldırıldı; Cache Components kapalı (K-19, ADR-0014). |
 | 2026-10-15 | v1.0 | İlk plan: ilan analizi, birlikte verilen kapsam kararları (K-01, K-03…K-05, K-11, K-13), fazlar, iş kuralları, senaryolar ve standartların başlangıç kararları. |

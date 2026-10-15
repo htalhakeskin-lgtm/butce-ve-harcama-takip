@@ -7,3 +7,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Project conventions
+
+- Design documents and standards live in `docs/` (Turkish). Read `docs/standards/` before writing code; rules carry IDs (BR-…, UC-…) that tests and error codes reuse.
+- Every ledger server action goes through `ledgerAction` (`src/server/action.ts`); domain services take `(db, ctx, input)` and are tested against real PostgreSQL in `tests/integration/`.
+- Amounts are integers in minor units (`src/lib/money.ts`); calendar days are `YYYY-MM-DD` strings (`src/lib/dates.ts`).
+- User-facing text lives in `src/i18n/messages/tr.json`; the server returns error codes only.
+- Before committing: `pnpm check`; for UI changes also `pnpm test:e2e`.

@@ -10,10 +10,6 @@ function isDoc(value: string): value is LegalDoc {
   return (DOCS as string[]).includes(value);
 }
 
-export function generateStaticParams() {
-  return DOCS.map((doc) => ({ doc }));
-}
-
 export async function generateMetadata({ params }: { params: Promise<{ doc: string }> }) {
   const { doc } = await params;
   if (!isDoc(doc)) return {};
