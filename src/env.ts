@@ -10,7 +10,7 @@ const serverSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   DATABASE_URL: z.url(),
   BETTER_AUTH_SECRET: z.string().min(32, "BETTER_AUTH_SECRET must be at least 32 characters"),
-  EMAIL_TRANSPORT: z.enum(["file", "resend"]).default("file"),
+  EMAIL_TRANSPORT: z.enum(["file", "resend", "log"]).default("file"),
   EMAIL_FROM: z.string().min(3),
   RESEND_API_KEY: z.string().optional(),
   CRON_SECRET: z.string().optional(),
@@ -44,7 +44,8 @@ export function serverEnv(): ServerEnv {
 
 /** The address users reach the app at: runtime APP_URL first, then the build-time public value. */
 export function appUrl(): string {
-  return serverEnv().APP_URL ?? publicEnv.appUrl;
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  return serverEnv().APP_URL ?? (vercel ? `https://${vercel}` : publicEnv.appUrl);
 }
 
 /** Shared demo account, when this server runs as a demo (both values set). */

@@ -33,8 +33,10 @@ function assertLocalDatabase(): void {
       return "";
     }
   })();
+  // A remote (e.g. Neon demo) database must be named explicitly: pnpm db:seed --allow-remote
+  if (process.argv.includes("--allow-remote")) return;
   if (process.env.NODE_ENV === "production" || !["localhost", "127.0.0.1"].includes(host)) {
-    throw new Error(`Refusing to seed a non-local database (${host || "no DATABASE_URL"}).`);
+    throw new Error(`Refusing to seed a non-local database (${host || "no DATABASE_URL"}). Add --allow-remote.`);
   }
 }
 

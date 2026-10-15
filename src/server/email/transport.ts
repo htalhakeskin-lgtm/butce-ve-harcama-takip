@@ -24,9 +24,14 @@ export const DEV_MAIL_DIR = path.join(process.cwd(), ".dev-mail");
  * Sends an e-mail through the configured transport (K-18: no provider is fixed in code).
  * - file: writes JSON to .dev-mail/ for local development and end-to-end tests
  * - resend: sends through Resend
+ * - log: sends nothing, only logs the kind (demo deployments without a mail provider)
  */
 export async function sendEmail(email: OutgoingEmail): Promise<void> {
   const env = serverEnv();
+  if (env.EMAIL_TRANSPORT === "log") {
+    logger.warn("email.skipped", { kind: email.kind });
+    return;
+  }
   if (env.EMAIL_TRANSPORT === "file") {
     await mkdir(DEV_MAIL_DIR, { recursive: true });
     const file = path.join(DEV_MAIL_DIR, `${Date.now()}-${newId()}.json`);
