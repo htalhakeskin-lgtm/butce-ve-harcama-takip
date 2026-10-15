@@ -33,8 +33,14 @@ export async function monthlySeries(
   const rows = await db
     .select({
       month: sql<string>`to_char(${transactions.occurredOn}, 'YYYY-MM')`,
-      incomeMinor: sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'income'), 0)`.mapWith(Number),
-      expenseMinor: sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'expense'), 0)`.mapWith(Number),
+      incomeMinor:
+        sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'income'), 0)`.mapWith(
+          Number,
+        ),
+      expenseMinor:
+        sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'expense'), 0)`.mapWith(
+          Number,
+        ),
     })
     .from(transactions)
     .where(

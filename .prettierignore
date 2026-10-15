@@ -1,0 +1,7 @@
+*.md
+pnpm-lock.yaml
+src/server/db/migrations/
+standards_ornek/
+.next/
+playwright-report/
+test-results/

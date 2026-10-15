@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  formatMoney,
-  isValidAmount,
-  parseMoney,
-  percentOf,
-  splitEvenly,
-  toInputString,
-} from "./money";
+import { formatMoney, isValidAmount, parseMoney, percentOf, splitEvenly, toInputString } from "./money";
 
 describe("parseMoney", () => {
   it.each([

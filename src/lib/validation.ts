@@ -11,9 +11,7 @@ import { MAX_AMOUNT_MINOR, MIN_AMOUNT_MINOR } from "./money";
 
 export const idSchema = z.uuid({ message: "invalid" });
 
-export const isoDaySchema = z
-  .string({ message: "required" })
-  .refine((v) => isIsoDay(v), { message: "invalidDate" });
+export const isoDaySchema = z.string({ message: "required" }).refine((v) => isIsoDay(v), { message: "invalidDate" });
 
 /** A positive amount in minor units within BR-SYS-007. */
 export const amountSchema = z
@@ -38,7 +36,10 @@ export function nameSchema(max: number) {
 }
 
 export function textSchema(max: number) {
-  return z.string().trim().max(max, { message: `tooLong|${max}` });
+  return z
+    .string()
+    .trim()
+    .max(max, { message: `tooLong|${max}` });
 }
 
 export const versionSchema = z.number().int().min(1);

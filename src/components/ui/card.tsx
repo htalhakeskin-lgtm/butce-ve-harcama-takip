@@ -10,8 +10,12 @@ export function CardHeader({ className, ...props }: ComponentProps<"div">) {
   return <div className={cn("flex items-center justify-between gap-3 px-4 pt-4 sm:px-5", className)} {...props} />;
 }
 
-export function CardTitle({ className, ...props }: ComponentProps<"h2">) {
-  return <h2 className={cn("text-base font-semibold text-foreground", className)} {...props} />;
+export function CardTitle({ className, children, ...props }: ComponentProps<"h2">) {
+  return (
+    <h2 className={cn("text-base font-semibold text-foreground", className)} {...props}>
+      {children}
+    </h2>
+  );
 }
 
 export function CardBody({ className, ...props }: ComponentProps<"div">) {

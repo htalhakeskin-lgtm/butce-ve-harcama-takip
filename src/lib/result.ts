@@ -5,13 +5,7 @@
  */
 
 export type TechnicalErrorCode =
-  | "validation"
-  | "unauthenticated"
-  | "forbidden"
-  | "notFound"
-  | "conflict"
-  | "rateLimited"
-  | "unexpected";
+  "validation" | "unauthenticated" | "forbidden" | "notFound" | "conflict" | "rateLimited" | "unexpected";
 
 export type ErrorCode = TechnicalErrorCode | `BR-${string}`;
 

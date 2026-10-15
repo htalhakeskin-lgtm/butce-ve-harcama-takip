@@ -53,7 +53,11 @@ export function parseMoney(input: string): number | null {
     }
   } else if (lastDot >= 0) {
     // "1.234" and "1.234.567" are thousands groups; "12.5" and "12.50" are decimals.
-    if (isValidGrouping(text, ".") && text.split(".").length > 1 && text.split(".").every((g, i) => i === 0 || g.length === 3)) {
+    if (
+      isValidGrouping(text, ".") &&
+      text.split(".").length > 1 &&
+      text.split(".").every((g, i) => i === 0 || g.length === 3)
+    ) {
       integerPart = text.split(".").join("");
     } else {
       const parts = text.split(".");
@@ -69,8 +73,7 @@ export function parseMoney(input: string): number | null {
   if (!/^\d+$/.test(integerPart) || !/^\d*$/.test(fractionPart)) return null;
   if (fractionPart.length > MINOR_DIGITS) return null;
 
-  const minor =
-    Number(integerPart) * MINOR_FACTOR + Number(fractionPart.padEnd(MINOR_DIGITS, "0") || "0");
+  const minor = Number(integerPart) * MINOR_FACTOR + Number(fractionPart.padEnd(MINOR_DIGITS, "0") || "0");
   if (!Number.isSafeInteger(minor)) return null;
   return negative ? -minor : minor;
 }
@@ -116,12 +119,7 @@ export type FormatMoneyOptions = {
  * Formats minor units for display. Turkish puts the symbol after the number ("1.234,56 ₺"),
  * following bank and invoice practice, although Intl's tr default puts it first (ui standard).
  */
-export function formatMoney(
-  minor: number,
-  currency: string,
-  locale: string,
-  options: FormatMoneyOptions = {},
-): string {
+export function formatMoney(minor: number, currency: string, locale: string, options: FormatMoneyOptions = {}): string {
   const parts = numberFormat(locale, currency).formatToParts(Math.abs(minor) / MINOR_FACTOR);
   const number = parts
     .filter((p) => p.type !== "currency" && p.type !== "literal" && p.type !== "minusSign")

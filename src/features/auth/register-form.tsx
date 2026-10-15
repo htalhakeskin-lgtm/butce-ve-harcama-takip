@@ -37,7 +37,8 @@ export function RegisterForm() {
     if (!name) next.name = errorText("required");
     else if (name.length > 60) next.name = errorText("tooLong|60");
     if (!EMAIL_RE.test(email)) next.email = errorText("invalidEmail");
-    if (password.length < PASSWORD_MIN_LENGTH || password.length > PASSWORD_MAX_LENGTH) next.password = errorText("BR-AUTH-001");
+    if (password.length < PASSWORD_MIN_LENGTH || password.length > PASSWORD_MAX_LENGTH)
+      next.password = errorText("BR-AUTH-001");
     if (!form.get("privacy")) next.privacy = errorText("mustAccept");
     if (!form.get("terms")) next.terms = errorText("mustAccept");
     setErrors(next);
@@ -68,20 +69,40 @@ export function RegisterForm() {
     router.push(`/check-email?email=${encodeURIComponent(email)}`);
   }
 
-  const legalLink = (href: string) => (chunks: ReactNode) => (
-    <Link href={href} target="_blank" className="text-accent underline-offset-4 hover:underline">
-      {chunks}
-    </Link>
-  );
+  const legalLink = (href: string) =>
+    function LegalLink(chunks: ReactNode) {
+      return (
+        <Link href={href} target="_blank" className="text-accent underline-offset-4 hover:underline">
+          {chunks}
+        </Link>
+      );
+    };
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
       {errors.form ? <FormAlert>{errors.form}</FormAlert> : null}
       <Field id="name" label={t("register.name")} error={errors.name}>
-        <Input id="name" name="name" autoComplete="name" required aria-invalid={!!errors.name} aria-describedby={describedBy("name", errors.name)} autoFocus />
+        <Input
+          id="name"
+          name="name"
+          autoComplete="name"
+          required
+          aria-invalid={!!errors.name}
+          aria-describedby={describedBy("name", errors.name)}
+          autoFocus
+        />
       </Field>
       <Field id="email" label={t("register.email")} error={errors.email}>
-        <Input id="email" name="email" type="email" inputMode="email" autoComplete="email" required aria-invalid={!!errors.email} aria-describedby={describedBy("email", errors.email)} />
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          required
+          aria-invalid={!!errors.email}
+          aria-describedby={describedBy("email", errors.email)}
+        />
       </Field>
       <Field id="password" label={t("register.password")} error={errors.password} hint={t("register.passwordHint")}>
         <PasswordInput

@@ -1,6 +1,14 @@
 import type { ReactNode } from "react";
 
-export function PageHeader({ title, actions, children }: { title: ReactNode; actions?: ReactNode; children?: ReactNode }) {
+export function PageHeader({
+  title,
+  actions,
+  children,
+}: {
+  title: ReactNode;
+  actions?: ReactNode;
+  children?: ReactNode;
+}) {
   return (
     <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">

@@ -33,7 +33,10 @@
     "showAsChart": "Grafik olarak göster",
     "errorId": "Hata kimliği: {id}",
     "skipToContent": "İçeriğe geç",
-    "demoDisclaimer": "Bu bir geliştirme ortamıdır."
+    "demoDisclaimer": "Bu bir geliştirme ortamıdır.",
+    "moveUp": "Yukarı taşı",
+    "moveDown": "Aşağı taşı",
+    "select": "Seçin"
   },
   "nav": {
     "dashboard": "Özet",
@@ -340,7 +343,8 @@
       "parent": "Üst kategori",
       "noParent": "Yok (üst kategori)",
       "color": "Renk",
-      "target": "Hedef kategori"
+      "target": "Hedef kategori",
+      "icon": "Simge"
     },
     "merge": "Birleştir",
     "mergeHint": "{name} kategorisinin tüm işlemleri ve bütçe limitleri seçtiğiniz kategoriye taşınacak, ardından {name} silinecek.",
@@ -358,7 +362,8 @@
     "deleteConfirmBody": "Bu kategori hiç kullanılmamış. Silinen kategori geri getirilemez.",
     "showArchived": "Arşivlenmişleri göster",
     "other": "{name} (diğer)",
-    "emptyTitle": "Bu türde kategori yok"
+    "emptyTitle": "Bu türde kategori yok",
+    "viewTransactions": "İşlemlerini gör"
   },
   "budgets": {
     "title": "Bütçe",
@@ -387,7 +392,10 @@
     "statusOver": "Aşıldı",
     "emptyCategories": "Henüz kategori bütçesi yok. Harcamayı sınırlamak istediğiniz kategoriler için ekleyin.",
     "category": "Kategori",
-    "amount": "Tutar"
+    "amount": "Tutar",
+    "setLimitTitle": "Bütçe limiti",
+    "overallTitle": "Genel aylık bütçe",
+    "noExpenseCategories": "Bütçe eklenebilecek gider kategorisi kalmadı."
   },
   "reports": {
     "title": "Raporlar",

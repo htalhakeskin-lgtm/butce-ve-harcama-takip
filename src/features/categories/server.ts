@@ -144,10 +144,7 @@ export async function updateCategory(db: DbOrTx, ctx: ServiceCtx, input: UpdateC
       await assertValidParent(tx, ctx, input.parentId, current.kind, current.id);
       if (input.parentId) {
         // BR-CAT-001: a category with children cannot become a child itself.
-        const [children] = await tx
-          .select({ n: count() })
-          .from(categories)
-          .where(eq(categories.parentId, current.id));
+        const [children] = await tx.select({ n: count() }).from(categories).where(eq(categories.parentId, current.id));
         if ((children?.n ?? 0) > 0) throw new AppError("BR-CAT-001", { field: "parentId" });
       }
     }

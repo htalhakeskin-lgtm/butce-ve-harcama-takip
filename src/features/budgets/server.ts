@@ -22,7 +22,11 @@ const OVERALL = "overall";
  * Limits in force for a month: for each category (and the overall budget) the latest row whose
  * effective_from is on or before the month (BR-BUD-003). A null amount means "no limit".
  */
-export async function effectiveLimits(db: DbOrTx, ctx: ServiceCtx, month: IsoMonth): Promise<Map<string, EffectiveLimit>> {
+export async function effectiveLimits(
+  db: DbOrTx,
+  ctx: ServiceCtx,
+  month: IsoMonth,
+): Promise<Map<string, EffectiveLimit>> {
   const rows = await db
     .selectDistinctOn([budgetLimits.categoryId], {
       categoryId: budgetLimits.categoryId,
@@ -118,10 +122,22 @@ export type MonthFlows = {
 export async function monthFlows(db: DbOrTx, ctx: ServiceCtx, month: IsoMonth): Promise<MonthFlows> {
   const [row] = await db
     .select({
-      incomeMinor: sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'income' and ${transactions.occurredOn} <= ${ctx.today}), 0)`.mapWith(Number),
-      expenseMinor: sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'expense' and ${transactions.occurredOn} <= ${ctx.today}), 0)`.mapWith(Number),
-      plannedIncomeMinor: sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'income' and ${transactions.occurredOn} > ${ctx.today}), 0)`.mapWith(Number),
-      plannedExpenseMinor: sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'expense' and ${transactions.occurredOn} > ${ctx.today}), 0)`.mapWith(Number),
+      incomeMinor:
+        sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'income' and ${transactions.occurredOn} <= ${ctx.today}), 0)`.mapWith(
+          Number,
+        ),
+      expenseMinor:
+        sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'expense' and ${transactions.occurredOn} <= ${ctx.today}), 0)`.mapWith(
+          Number,
+        ),
+      plannedIncomeMinor:
+        sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'income' and ${transactions.occurredOn} > ${ctx.today}), 0)`.mapWith(
+          Number,
+        ),
+      plannedExpenseMinor:
+        sql<number>`coalesce(sum(${transactions.amountMinor}) filter (where ${transactions.type} = 'expense' and ${transactions.occurredOn} > ${ctx.today}), 0)`.mapWith(
+          Number,
+        ),
     })
     .from(transactions)
     .where(
@@ -139,8 +155,14 @@ async function expenseByCategory(db: DbOrTx, ctx: ServiceCtx, month: IsoMonth) {
   const rows = await db
     .select({
       categoryId: transactionLines.categoryId,
-      spentMinor: sql<number>`coalesce(sum(${transactionLines.amountMinor}) filter (where ${transactions.occurredOn} <= ${ctx.today}), 0)`.mapWith(Number),
-      plannedMinor: sql<number>`coalesce(sum(${transactionLines.amountMinor}) filter (where ${transactions.occurredOn} > ${ctx.today}), 0)`.mapWith(Number),
+      spentMinor:
+        sql<number>`coalesce(sum(${transactionLines.amountMinor}) filter (where ${transactions.occurredOn} <= ${ctx.today}), 0)`.mapWith(
+          Number,
+        ),
+      plannedMinor:
+        sql<number>`coalesce(sum(${transactionLines.amountMinor}) filter (where ${transactions.occurredOn} > ${ctx.today}), 0)`.mapWith(
+          Number,
+        ),
     })
     .from(transactionLines)
     .innerJoin(transactions, eq(transactions.id, transactionLines.transactionId))
@@ -224,7 +246,12 @@ export async function budgetOverview(db: DbOrTx, ctx: ServiceCtx, month: IsoMont
   for (const parent of rows.filter((r) => r.parentId === null)) {
     const childSumMinor = rows.filter((r) => r.parentId === parent.categoryId).reduce((s, r) => s + r.limitMinor, 0);
     if (childSumMinor > parent.limitMinor) {
-      childSumWarnings.push({ categoryId: parent.categoryId, name: parent.name, limitMinor: parent.limitMinor, childSumMinor });
+      childSumWarnings.push({
+        categoryId: parent.categoryId,
+        name: parent.name,
+        limitMinor: parent.limitMinor,
+        childSumMinor,
+      });
     }
   }
 

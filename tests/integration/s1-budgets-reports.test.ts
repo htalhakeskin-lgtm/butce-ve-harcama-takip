@@ -47,8 +47,26 @@ describe("S1 demo scenario at service level (plan §13.3)", () => {
     const ctx = await makeUser();
     const bank = newId();
     const card = newId();
-    await createAccount(db(), ctx, { id: bank, name: "Banka", type: "bank", openingBalanceMinor: 2_500_000, openingOn: TODAY, includeInTotal: true, color: "blue", creditLimitMinor: null });
-    await createAccount(db(), ctx, { id: card, name: "Kredi Kartı", type: "credit_card", openingBalanceMinor: 0, openingOn: TODAY, includeInTotal: true, color: "red", creditLimitMinor: 5_000_000 });
+    await createAccount(db(), ctx, {
+      id: bank,
+      name: "Banka",
+      type: "bank",
+      openingBalanceMinor: 2_500_000,
+      openingOn: TODAY,
+      includeInTotal: true,
+      color: "blue",
+      creditLimitMinor: null,
+    });
+    await createAccount(db(), ctx, {
+      id: card,
+      name: "Kredi Kartı",
+      type: "credit_card",
+      openingBalanceMinor: 0,
+      openingOn: TODAY,
+      includeInTotal: true,
+      color: "red",
+      creditLimitMinor: 5_000_000,
+    });
     const cash = await accountId(ctx, "Nakit");
 
     await tx(ctx, "income", bank, "Maaş", 4_000_000);
@@ -57,9 +75,24 @@ describe("S1 demo scenario at service level (plan §13.3)", () => {
     await tx(ctx, "expense", bank, "Elektrik", 65_000);
     await deleteTransaction(db(), ctx, market);
     await restoreTransaction(db(), ctx, market);
-    await createTransaction(db(), ctx, { id: newId(), type: "transfer", accountId: bank, toAccountId: cash, amountMinor: 100_000, occurredOn: TODAY, description: "", note: "", lines: [] });
+    await createTransaction(db(), ctx, {
+      id: newId(),
+      type: "transfer",
+      accountId: bank,
+      toAccountId: cash,
+      amountMinor: 100_000,
+      occurredOn: TODAY,
+      description: "",
+      note: "",
+      lines: [],
+    });
     await setBudgetLimit(db(), ctx, { categoryId: null, month: "2026-10", amountMinor: 2_000_000, scope: "fromNow" });
-    await setBudgetLimit(db(), ctx, { categoryId: await categoryId(ctx, "Market"), month: "2026-10", amountMinor: 300_000, scope: "fromNow" });
+    await setBudgetLimit(db(), ctx, {
+      categoryId: await categoryId(ctx, "Market"),
+      month: "2026-10",
+      amountMinor: 300_000,
+      scope: "fromNow",
+    });
 
     // Step 8: dashboard
     const accounts = await listAccounts(db(), ctx);
@@ -73,14 +106,21 @@ describe("S1 demo scenario at service level (plan §13.3)", () => {
     expect(overview.overall?.remainingMinor).toBe(1_609_950);
 
     // Step 9: filter by "Ulaşım"
-    const filters = transactionFiltersSchema.parse({ from: "2026-10-01", to: "2026-10-31", categoryIds: [await categoryId(ctx, "Ulaşım")] });
+    const filters = transactionFiltersSchema.parse({
+      from: "2026-10-01",
+      to: "2026-10-31",
+      categoryIds: [await categoryId(ctx, "Ulaşım")],
+    });
     expect((await listTransactions(db(), ctx, filters)).items).toHaveLength(1);
     expect((await transactionTotals(db(), ctx, filters)).expenseMinor).toBe(200_000);
 
     // Step 10: reports
     const [october] = await monthlySeries(db(), ctx, ["2026-10"]);
     expect(october).toEqual({ month: "2026-10", incomeMinor: 4_000_000, expenseMinor: 390_050 });
-    const distribution = await categoryDistribution(db(), ctx, { range: { from: "2026-10-01", to: "2026-10-31" }, kind: "expense" });
+    const distribution = await categoryDistribution(db(), ctx, {
+      range: { from: "2026-10-01", to: "2026-10-31" },
+      kind: "expense",
+    });
     const total = distribution.reduce((s, d) => s + d.amountMinor, 0);
     expect(distribution.map((d) => [d.name, percentOf(d.amountMinor, total)])).toEqual([
       ["Ulaşım", 51.3],
@@ -97,7 +137,10 @@ describe("budgets (BR-BUD-002, 003, 004)", () => {
   it("a limit continues into later months until changed", async () => {
     const ctx = await makeUser();
     await setBudgetLimit(db(), ctx, { categoryId: null, month: "2026-08", amountMinor: 1_000_000, scope: "fromNow" });
-    expect((await effectiveLimits(db(), ctx, "2026-10")).get("overall")).toEqual({ amountMinor: 1_000_000, effectiveFrom: "2026-08-01" });
+    expect((await effectiveLimits(db(), ctx, "2026-10")).get("overall")).toEqual({
+      amountMinor: 1_000_000,
+      effectiveFrom: "2026-08-01",
+    });
     expect((await effectiveLimits(db(), ctx, "2026-07")).get("overall")).toBeUndefined();
     expect((await budgetOverview(db(), ctx, "2026-10")).overall?.carriedOver).toBe(true);
   });
@@ -125,12 +168,32 @@ describe("budgets (BR-BUD-002, 003, 004)", () => {
     const cash = await accountId(ctx, "Nakit");
     await tx(ctx, "expense", cash, "Yakıt", 100_000);
     await tx(ctx, "expense", cash, "Taksi", 20_000, "2026-10-28");
-    await setBudgetLimit(db(), ctx, { categoryId: await categoryId(ctx, "Ulaşım"), month: "2026-10", amountMinor: 150_000, scope: "fromNow" });
-    await setBudgetLimit(db(), ctx, { categoryId: await categoryId(ctx, "Yakıt"), month: "2026-10", amountMinor: 120_000, scope: "fromNow" });
-    await setBudgetLimit(db(), ctx, { categoryId: await categoryId(ctx, "Taksi"), month: "2026-10", amountMinor: 50_000, scope: "fromNow" });
+    await setBudgetLimit(db(), ctx, {
+      categoryId: await categoryId(ctx, "Ulaşım"),
+      month: "2026-10",
+      amountMinor: 150_000,
+      scope: "fromNow",
+    });
+    await setBudgetLimit(db(), ctx, {
+      categoryId: await categoryId(ctx, "Yakıt"),
+      month: "2026-10",
+      amountMinor: 120_000,
+      scope: "fromNow",
+    });
+    await setBudgetLimit(db(), ctx, {
+      categoryId: await categoryId(ctx, "Taksi"),
+      month: "2026-10",
+      amountMinor: 50_000,
+      scope: "fromNow",
+    });
     const overview = await budgetOverview(db(), ctx, "2026-10");
     const transport = overview.categories.find((c) => c.name === "Ulaşım");
-    expect(transport).toMatchObject({ spentMinor: 100_000, plannedMinor: 20_000, remainingMinor: 30_000, status: "near" });
+    expect(transport).toMatchObject({
+      spentMinor: 100_000,
+      plannedMinor: 20_000,
+      remainingMinor: 30_000,
+      status: "near",
+    });
     expect(overview.childSumWarnings).toEqual([
       { categoryId: transport?.categoryId, name: "Ulaşım", limitMinor: 150_000, childSumMinor: 170_000 },
     ]);

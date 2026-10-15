@@ -107,8 +107,14 @@ export async function deleteLedgersOwnedBy(db: DbOrTx, userId: string): Promise<
       .select({
         id: ledgers.id,
         kind: ledgers.kind,
-        members: sql<number>`(select count(*) from ${ledgerMembers} m where m.ledger_id = ${sql.raw(`"ledgers"."id"`)})`.mapWith(Number),
-        owners: sql<number>`(select count(*) from ${ledgerMembers} m where m.ledger_id = ${sql.raw(`"ledgers"."id"`)} and m.role = 'owner')`.mapWith(Number),
+        members:
+          sql<number>`(select count(*) from ${ledgerMembers} m where m.ledger_id = ${sql.raw(`"ledgers"."id"`)})`.mapWith(
+            Number,
+          ),
+        owners:
+          sql<number>`(select count(*) from ${ledgerMembers} m where m.ledger_id = ${sql.raw(`"ledgers"."id"`)} and m.role = 'owner')`.mapWith(
+            Number,
+          ),
       })
       .from(ledgers)
       .innerJoin(ledgerMembers, eq(ledgerMembers.ledgerId, ledgers.id))

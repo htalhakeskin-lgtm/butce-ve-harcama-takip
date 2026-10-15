@@ -80,9 +80,7 @@ export async function listAccounts(
   const rows = await db
     .select({ ...accountColumns, balanceMinor: balanceSql(options.asOf ?? ctx.today) })
     .from(accounts)
-    .where(
-      and(eq(accounts.ledgerId, ctx.ledgerId), options.includeArchived ? undefined : isNull(accounts.archivedAt)),
-    )
+    .where(and(eq(accounts.ledgerId, ctx.ledgerId), options.includeArchived ? undefined : isNull(accounts.archivedAt)))
     .orderBy(asc(accounts.sortOrder), asc(accounts.createdAt));
   return rows.map(toView);
 }

@@ -10,7 +10,11 @@ export const authClient = createAuthClient({
 });
 
 /** Maps Better Auth error responses to our error codes (BR-AUTH-*, technical codes). */
-export function authErrorCode(error: { code?: string | undefined; status?: number; message?: string | undefined }): string {
+export function authErrorCode(error: {
+  code?: string | undefined;
+  status?: number;
+  message?: string | undefined;
+}): string {
   if (error.status === 429) return "rateLimited";
   switch (error.code) {
     case "PASSWORD_BREACHED":

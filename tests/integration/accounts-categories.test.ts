@@ -82,7 +82,12 @@ describe("accounts", () => {
   it("BR-ACC-001/002/003: balances and net worth", async () => {
     const ctx = await makeUser();
     const bank = account();
-    const card = account({ name: "Kart", type: "credit_card", openingBalanceMinor: -50_000, creditLimitMinor: 5_000_000 });
+    const card = account({
+      name: "Kart",
+      type: "credit_card",
+      openingBalanceMinor: -50_000,
+      creditLimitMinor: 5_000_000,
+    });
     await createAccount(db(), ctx, bank);
     await createAccount(db(), ctx, card);
     const market = await categoryId(ctx, "Market");
@@ -169,7 +174,14 @@ describe("categories", () => {
     const ctx = await makeUser();
     const fuel = await categoryId(ctx, "Yakıt");
     await expectCode(
-      createCategory(db(), ctx, { id: newId(), kind: "expense", name: "Benzin", parentId: fuel, color: "blue", icon: "fuel" }),
+      createCategory(db(), ctx, {
+        id: newId(),
+        kind: "expense",
+        name: "Benzin",
+        parentId: fuel,
+        color: "blue",
+        icon: "fuel",
+      }),
       "BR-CAT-001",
     );
   });
@@ -178,7 +190,14 @@ describe("categories", () => {
     const ctx = await makeUser();
     const salary = await categoryId(ctx, "Maaş");
     await expectCode(
-      createCategory(db(), ctx, { id: newId(), kind: "expense", name: "Prim", parentId: salary, color: "green", icon: "tag" }),
+      createCategory(db(), ctx, {
+        id: newId(),
+        kind: "expense",
+        name: "Prim",
+        parentId: salary,
+        color: "green",
+        icon: "tag",
+      }),
       "BR-CAT-002",
     );
   });
@@ -186,11 +205,25 @@ describe("categories", () => {
   it("BR-CAT-003: names are unique within the same parent and kind", async () => {
     const ctx = await makeUser();
     await expectCode(
-      createCategory(db(), ctx, { id: newId(), kind: "expense", name: "MARKET", parentId: null, color: "green", icon: "tag" }),
+      createCategory(db(), ctx, {
+        id: newId(),
+        kind: "expense",
+        name: "MARKET",
+        parentId: null,
+        color: "green",
+        icon: "tag",
+      }),
       "BR-CAT-003",
     );
     // The same name is fine as an income category and under another parent.
-    await createCategory(db(), ctx, { id: newId(), kind: "income", name: "Market", parentId: null, color: "green", icon: "tag" });
+    await createCategory(db(), ctx, {
+      id: newId(),
+      kind: "income",
+      name: "Market",
+      parentId: null,
+      color: "green",
+      icon: "tag",
+    });
     await createCategory(db(), ctx, {
       id: newId(),
       kind: "expense",

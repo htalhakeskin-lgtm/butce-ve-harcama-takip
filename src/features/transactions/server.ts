@@ -70,7 +70,8 @@ async function validate(db: DbOrTx, ctx: ServiceCtx, input: TransactionInput, ex
   if (cats.length !== categoryIds.length) throw new AppError("notFound", { field: "lines.0.categoryId" });
   for (const category of cats) {
     // BR-TRX-003
-    if (category.kind !== (input.type as CategoryKind)) throw new AppError("BR-TRX-003", { field: "lines.0.categoryId" });
+    if (category.kind !== (input.type as CategoryKind))
+      throw new AppError("BR-TRX-003", { field: "lines.0.categoryId" });
     if (category.archivedAt && !existing?.categoryIds.has(category.id)) {
       throw new AppError("BR-TRX-006", { field: "lines.0.categoryId" });
     }
@@ -393,11 +394,18 @@ export async function listTransactions(
           name: categories.name,
           icon: categories.icon,
           color: categories.color,
-          parentName: sql<string | null>`(select p.name from ${categories} p where p.id = ${sql.raw(`"categories"."parent_id"`)})`,
+          parentName: sql<
+            string | null
+          >`(select p.name from ${categories} p where p.id = ${sql.raw(`"categories"."parent_id"`)})`,
         })
         .from(transactionLines)
         .innerJoin(categories, eq(categories.id, transactionLines.categoryId))
-        .where(inArray(transactionLines.transactionId, page.map((r) => r.id)))
+        .where(
+          inArray(
+            transactionLines.transactionId,
+            page.map((r) => r.id),
+          ),
+        )
         .orderBy(transactionLines.sortOrder)
     : [];
   const linesByTransaction = new Map<string, typeof lines>();
@@ -449,8 +457,14 @@ export async function transactionTotals(
 
   const [sums] = await db
     .select({
-      incomeMinor: sql<number>`coalesce(sum(${transactionLines.amountMinor}) filter (where ${transactions.type} = 'income'), 0)`.mapWith(Number),
-      expenseMinor: sql<number>`coalesce(sum(${transactionLines.amountMinor}) filter (where ${transactions.type} = 'expense'), 0)`.mapWith(Number),
+      incomeMinor:
+        sql<number>`coalesce(sum(${transactionLines.amountMinor}) filter (where ${transactions.type} = 'income'), 0)`.mapWith(
+          Number,
+        ),
+      expenseMinor:
+        sql<number>`coalesce(sum(${transactionLines.amountMinor}) filter (where ${transactions.type} = 'expense'), 0)`.mapWith(
+          Number,
+        ),
     })
     .from(transactions)
     .innerJoin(transactionLines, eq(transactionLines.transactionId, transactions.id))
@@ -465,12 +479,7 @@ export async function transactionTotals(
 }
 
 /** Last used categories for the quick picker (UC-06). */
-export async function recentCategoryIds(
-  db: DbOrTx,
-  ctx: ServiceCtx,
-  kind: CategoryKind,
-  limit = 6,
-): Promise<string[]> {
+export async function recentCategoryIds(db: DbOrTx, ctx: ServiceCtx, kind: CategoryKind, limit = 6): Promise<string[]> {
   const rows = await db
     .select({ id: transactionLines.categoryId, last: sql`max(${transactions.createdAt})` })
     .from(transactionLines)
@@ -496,7 +505,9 @@ export async function lastUsedAccountId(db: DbOrTx, ctx: ServiceCtx): Promise<st
     .select({ id: transactions.accountId })
     .from(transactions)
     .innerJoin(accounts, eq(accounts.id, transactions.accountId))
-    .where(and(eq(transactions.ledgerId, ctx.ledgerId), eq(transactions.createdBy, ctx.userId), isNull(accounts.archivedAt)))
+    .where(
+      and(eq(transactions.ledgerId, ctx.ledgerId), eq(transactions.createdBy, ctx.userId), isNull(accounts.archivedAt)),
+    )
     .orderBy(desc(transactions.createdAt))
     .limit(1);
   return row?.id ?? null;

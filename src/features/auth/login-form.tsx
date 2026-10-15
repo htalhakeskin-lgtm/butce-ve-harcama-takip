@@ -14,7 +14,13 @@ import { useErrorText } from "@/lib/use-error-text";
 import { FormAlert } from "./auth-card";
 import { PasswordInput } from "./password-input";
 
-export function LoginForm({ notice, redirectTo }: { notice?: "passwordChanged" | "accountDeleted"; redirectTo: string }) {
+export function LoginForm({
+  notice,
+  redirectTo,
+}: {
+  notice?: "passwordChanged" | "accountDeleted";
+  redirectTo: string;
+}) {
   const t = useTranslations("auth");
   const errorText = useErrorText();
   const router = useRouter();

@@ -1,6 +1,16 @@
 import type { ReactNode } from "react";
 
-export function AuthCard({ title, subtitle, children, footer }: { title: string; subtitle?: string; children: ReactNode; footer?: ReactNode }) {
+export function AuthCard({
+  title,
+  subtitle,
+  children,
+  footer,
+}: {
+  title: string;
+  subtitle?: string;
+  children: ReactNode;
+  footer?: ReactNode;
+}) {
   return (
     <div className="w-full max-w-md">
       <div className="rounded-xl border border-border bg-surface p-5 sm:p-8">
@@ -13,7 +23,13 @@ export function AuthCard({ title, subtitle, children, footer }: { title: string;
   );
 }
 
-export function FormAlert({ tone = "danger", children }: { tone?: "danger" | "info" | "success"; children: ReactNode }) {
+export function FormAlert({
+  tone = "danger",
+  children,
+}: {
+  tone?: "danger" | "info" | "success";
+  children: ReactNode;
+}) {
   const classes = {
     danger: "bg-danger-soft text-danger",
     info: "bg-info-soft text-info",

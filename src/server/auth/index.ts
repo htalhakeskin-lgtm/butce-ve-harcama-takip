@@ -137,9 +137,7 @@ function createAuth() {
               throw new APIError("BAD_REQUEST", { message: "BR-PRV-001", code: "BR-PRV-001" });
             }
             const timeZone =
-              typeof user.timeZone === "string" && isValidTimeZone(user.timeZone)
-                ? user.timeZone
-                : DEFAULT_TIME_ZONE;
+              typeof user.timeZone === "string" && isValidTimeZone(user.timeZone) ? user.timeZone : DEFAULT_TIME_ZONE;
             return { data: { ...user, timeZone, locale: "tr", consentAt: new Date() } };
           },
           after: async (user) => {

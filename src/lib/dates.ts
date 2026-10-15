@@ -37,6 +37,8 @@ function fromUtc(date: Date): IsoDay {
 }
 
 /** Today's calendar day in the given IANA time zone. */
+// The one boundary that reads the clock; domain code receives its result.
+// eslint-disable-next-line no-restricted-syntax -- default for callers outside the domain
 export function todayIn(timeZone: string, now: Date = new Date()): IsoDay {
   // en-CA formats as YYYY-MM-DD.
   return new Intl.DateTimeFormat("en-CA", {

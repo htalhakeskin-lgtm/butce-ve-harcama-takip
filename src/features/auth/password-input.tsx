@@ -5,7 +5,11 @@ import { useState, type ComponentProps } from "react";
 
 import { Input } from "@/components/ui/input";
 
-export function PasswordInput({ showLabel, hideLabel, ...props }: ComponentProps<"input"> & { showLabel: string; hideLabel: string }) {
+export function PasswordInput({
+  showLabel,
+  hideLabel,
+  ...props
+}: ComponentProps<"input"> & { showLabel: string; hideLabel: string }) {
   const [visible, setVisible] = useState(false);
   return (
     <div className="relative">

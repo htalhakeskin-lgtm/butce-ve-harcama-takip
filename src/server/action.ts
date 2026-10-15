@@ -17,7 +17,7 @@ import { logger } from "@/server/logger";
  * Rule violations (AppError) become error codes; anything else is logged with an error id.
  */
 export function ledgerAction<S extends z.ZodType, T>(
-  options: { schema: S; minRole: LedgerRole; name: string },
+  options: { schema: S; minRole: LedgerRole; name: string; readOnly?: boolean },
   handler: (input: z.infer<S>, ctx: RequestContext) => Promise<T>,
 ): (input: z.input<S>) => Promise<Result<T>> {
   return async (raw) => {
@@ -30,7 +30,8 @@ export function ledgerAction<S extends z.ZodType, T>(
       if (!parsed.success) return fail(validationError(parsed.error));
 
       const data = await handler(parsed.data, ctx);
-      revalidatePath("/", "layout");
+      // Writes refresh every screen of the ledger; reads leave the router cache alone.
+      if (!options.readOnly) revalidatePath("/", "layout");
       return ok(data);
     } catch (error) {
       unstable_rethrow(error);

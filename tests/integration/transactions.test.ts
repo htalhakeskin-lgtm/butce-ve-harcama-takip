@@ -114,7 +114,12 @@ describe("editing and deleting", () => {
   it("BR-SYS-005: a stale version is rejected", async () => {
     const ctx = await makeUser();
     const input = await expense(ctx);
-    await updateTransaction(db(), ctx, { ...input, amountMinor: 1000, lines: [{ ...input.lines[0]!, amountMinor: 1000 }], version: 1 });
+    await updateTransaction(db(), ctx, {
+      ...input,
+      amountMinor: 1000,
+      lines: [{ ...input.lines[0]!, amountMinor: 1000 }],
+      version: 1,
+    });
     await expectCode(updateTransaction(db(), ctx, { ...input, version: 1 }), "conflict");
     expect((await getTransaction(db(), ctx, input.id))?.amountMinor).toBe(1000);
   });
@@ -141,7 +146,11 @@ describe("editing and deleting", () => {
     await expectCode(createTransaction(db(), intruder, input), "conflict");
     // The intruder cannot point a transaction at the owner's account either.
     await expectCode(
-      createTransaction(db(), intruder, { ...input, id: newId(), lines: [{ categoryId: await categoryId(intruder, "Market"), amountMinor: input.amountMinor }] }),
+      createTransaction(db(), intruder, {
+        ...input,
+        id: newId(),
+        lines: [{ categoryId: await categoryId(intruder, "Market"), amountMinor: input.amountMinor }],
+      }),
       "notFound",
     );
   });
@@ -155,7 +164,10 @@ describe("listing and filtering (UC-09)", () => {
       amountMinor: 200_000,
       lines: [{ categoryId: await categoryId(ctx, "Yakıt"), amountMinor: 200_000 }],
     });
-    await expense(ctx, { amountMinor: 65_000, lines: [{ categoryId: await categoryId(ctx, "Elektrik"), amountMinor: 65_000 }] });
+    await expense(ctx, {
+      amountMinor: 65_000,
+      lines: [{ categoryId: await categoryId(ctx, "Elektrik"), amountMinor: 65_000 }],
+    });
 
     const october = filters({ from: "2026-10-01", to: "2026-10-31" });
     expect((await listTransactions(db(), ctx, october)).items).toHaveLength(2);
@@ -201,7 +213,16 @@ describe("listing and filtering (UC-09)", () => {
 
   it("shows transfers with both accounts and excludes them from totals", async () => {
     const ctx = await makeUser();
-    const bank = { id: newId(), name: "Banka", type: "bank" as const, openingBalanceMinor: 100_000, openingOn: TODAY, includeInTotal: true, color: "blue" as const, creditLimitMinor: null };
+    const bank = {
+      id: newId(),
+      name: "Banka",
+      type: "bank" as const,
+      openingBalanceMinor: 100_000,
+      openingOn: TODAY,
+      includeInTotal: true,
+      color: "blue" as const,
+      creditLimitMinor: null,
+    };
     await createAccount(db(), ctx, bank);
     await createTransaction(db(), ctx, {
       id: newId(),

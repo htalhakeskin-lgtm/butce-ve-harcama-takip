@@ -15,7 +15,11 @@ function safeRedirect(value: string | undefined): string {
   return value && value.startsWith("/") && !value.startsWith("//") ? value : "/dashboard";
 }
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   const params = await searchParams;
   if (await getSessionUser()) redirect(safeRedirect(params.next));
   const t = await getTranslations("auth.login");

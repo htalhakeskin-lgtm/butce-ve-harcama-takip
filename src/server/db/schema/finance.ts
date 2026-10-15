@@ -102,15 +102,9 @@ export const accounts = pgTable(
   },
   (t) => [
     unique("ux_accounts_ledger_name_key").on(t.ledgerId, t.nameKey),
-    check(
-      "ck_accounts_type",
-      sql`${t.type} in ('cash', 'bank', 'credit_card', 'savings', 'other')`,
-    ),
+    check("ck_accounts_type", sql`${t.type} in ('cash', 'bank', 'credit_card', 'savings', 'other')`),
     check("ck_accounts_name_length", sql`char_length(${t.name}) between 1 and 60`),
-    check(
-      "ck_accounts_opening_balance",
-      sql`abs(${t.openingBalanceMinor}) <= ${sql.raw(String(MAX_AMOUNT_MINOR))}`,
-    ),
+    check("ck_accounts_opening_balance", sql`abs(${t.openingBalanceMinor}) <= ${sql.raw(String(MAX_AMOUNT_MINOR))}`),
     check("ck_accounts_statement_day", sql`${t.statementDay} is null or ${t.statementDay} between 1 and 31`),
     check("ck_accounts_due_day", sql`${t.dueDay} is null or ${t.dueDay} between 1 and 31`),
   ],
@@ -231,9 +225,7 @@ export const budgetLimits = pgTable(
     ...timestamps,
   },
   (t) => [
-    unique("ux_budget_limits_ledger_category_month")
-      .on(t.ledgerId, t.categoryId, t.effectiveFrom)
-      .nullsNotDistinct(),
+    unique("ux_budget_limits_ledger_category_month").on(t.ledgerId, t.categoryId, t.effectiveFrom).nullsNotDistinct(),
     index("ix_budget_limits_category_id").on(t.categoryId),
     check("ck_budget_limits_amount", sql`${t.amountMinor} is null or ${t.amountMinor} > 0`),
     check("ck_budget_limits_first_day", sql`extract(day from ${t.effectiveFrom}) = 1`),
