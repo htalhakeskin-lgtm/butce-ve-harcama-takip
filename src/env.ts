@@ -14,6 +14,14 @@ const serverSchema = z.object({
   EMAIL_FROM: z.string().min(3),
   RESEND_API_KEY: z.string().optional(),
   CRON_SECRET: z.string().optional(),
+  /**
+   * Public address read at runtime. Overrides NEXT_PUBLIC_APP_URL (which is fixed at build time),
+   * e.g. for a demo behind a tunnel whose address changes on every start.
+   */
+  APP_URL: z.url().optional(),
+  /** Shared demo account: shown on the login page and protected from changes (demo standard). */
+  DEMO_ACCOUNT_EMAIL: z.email().optional(),
+  DEMO_ACCOUNT_PASSWORD: z.string().optional(),
 });
 
 export type ServerEnv = z.infer<typeof serverSchema>;
@@ -32,6 +40,19 @@ export function serverEnv(): ServerEnv {
   }
   cached = parsed.data;
   return cached;
+}
+
+/** The address users reach the app at: runtime APP_URL first, then the build-time public value. */
+export function appUrl(): string {
+  return serverEnv().APP_URL ?? publicEnv.appUrl;
+}
+
+/** Shared demo account, when this server runs as a demo (both values set). */
+export function demoAccount(): { email: string; password: string } | null {
+  const env = serverEnv();
+  return env.DEMO_ACCOUNT_EMAIL && env.DEMO_ACCOUNT_PASSWORD
+    ? { email: env.DEMO_ACCOUNT_EMAIL, password: env.DEMO_ACCOUNT_PASSWORD }
+    : null;
 }
 
 /** Values that are safe to expose to the browser. Must be referenced literally for Next.js inlining. */

@@ -67,12 +67,15 @@ function ThemeSync({ theme }: { theme: Theme }) {
 }
 
 export function AppShell({
+  demo = false,
   appName,
   userName,
   email,
   theme,
   children,
 }: {
+  /** Demo server: a thin strip tells visitors the data is sample data. */
+  demo?: boolean;
   appName: string;
   userName: string;
   email: string;
@@ -81,6 +84,7 @@ export function AppShell({
 }) {
   const t = useTranslations("nav");
   const tc = useTranslations("common");
+  const tDemo = useTranslations("demo");
   const pathname = usePathname();
   const router = useRouter();
   const { primary, secondary } = useNav();
@@ -173,6 +177,11 @@ export function AppShell({
         <span className="text-base font-bold tracking-tight">{appName}</span>
       </header>
 
+      {demo ? (
+        <div role="note" className="bg-info-soft px-4 py-2 text-center text-xs font-medium text-info sm:text-sm">
+          {tDemo("banner")}
+        </div>
+      ) : null}
       <main id="main" className="mx-auto w-full max-w-6xl px-4 pt-4 pb-28 sm:px-6 sm:pt-6 lg:px-8 lg:pb-10">
         {children}
       </main>

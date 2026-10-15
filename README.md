@@ -62,6 +62,21 @@ Doğrulanmış bir deneme hesabı ve son 6 aya yayılmış örnek veri (hesaplar
 
 Kendi hesabınızı açarken şifre en az 10 karakter olmalı ve bilinen veri sızıntılarında geçmemelidir (ör. `Password123!` reddedilir).
 
+## Müşteriye demo bağlantısı (ücretsiz, hesapsız)
+
+```bash
+pnpm demo:share
+```
+
+Uygulamayı bu bilgisayarda üretim modunda (port 3200) başlatır ve Cloudflare Quick Tunnel ile herkese açık bir `https://….trycloudflare.com` adresi verir. Ekrana yazılan bağlantıyı müşteriye gönderin; giriş sayfası deneme hesabının bilgileriyle dolu gelir.
+
+- Bağlantı **yalnızca komut açıkken ve bilgisayar açıkken** çalışır; her başlatmada adres değişir.
+- Demo sunucusunda yeni kayıt kapalıdır; deneme hesabının şifresi, e-postası ve adı değiştirilemez, hesap silinemez (sunucu tarafında engelli).
+- Verileri baştan kurmak için: `pnpm demo:share --reset`. Kod değiştiyse: `pnpm demo:share --rebuild`.
+- Gerekli: Docker ve cloudflared (`winget install --id Cloudflare.cloudflared`).
+
+Kalıcı bir adres gerektiğinde Vercel + Neon'a geçilir (aşağıda "Yayına alma").
+
 ## Komutlar
 
 | Komut | Ne yapar |
@@ -76,6 +91,7 @@ Kendi hesabınızı açarken şifre en az 10 karakter olmalı ve bilinen veri s�
 | `pnpm db:generate` | Şema değişikliğinden migration üretir (`src/server/db/migrations/`) |
 | `pnpm db:migrate` | Migration'ları `DATABASE_URL`'deki veritabanına uygular |
 | `pnpm db:seed` | Yerel veritabanına örnek verili deneme hesabı kurar |
+| `pnpm demo:share` | Demo bağlantısı açar (Cloudflare Quick Tunnel) |
 
 Uçtan uca testleri ilk kez çalıştırmadan önce: `pnpm exec playwright install chromium`.
 

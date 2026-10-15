@@ -2,11 +2,11 @@ import "server-only";
 
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { APIError } from "better-auth/api";
+import { APIError, createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import { hashPassword, verifyPassword } from "better-auth/crypto";
 import { nextCookies } from "better-auth/next-js";
 
-import { publicEnv, serverEnv } from "@/env";
+import { appUrl, demoAccount, publicEnv, serverEnv } from "@/env";
 import { DEFAULT_TIME_ZONE, isValidTimeZone } from "@/lib/dates";
 import { newId } from "@/lib/ids";
 import { createPersonalLedger, deleteLedgersOwnedBy } from "@/features/ledgers/server";
@@ -20,15 +20,26 @@ import { isPasswordBreached } from "./password-check";
 
 const DAY = 60 * 60 * 24;
 
+/** Auth endpoints that would let one visitor lock others out of the shared demo account. */
+const DEMO_PROTECTED_PATHS = new Set([
+  "/change-password",
+  "/change-email",
+  "/delete-user",
+  "/update-user",
+  "/set-password",
+]);
+
 function createAuth() {
   const env = serverEnv();
   const db = getDb();
+  const url = appUrl();
+  const demo = demoAccount();
 
   return betterAuth({
     appName: publicEnv.appName,
-    baseURL: publicEnv.appUrl,
+    baseURL: url,
     secret: env.BETTER_AUTH_SECRET,
-    trustedOrigins: [publicEnv.appUrl],
+    trustedOrigins: [url],
     database: drizzleAdapter(db, {
       provider: "pg",
       schema: {
@@ -70,6 +81,8 @@ function createAuth() {
     },
     emailAndPassword: {
       enabled: true,
+      // A demo server has no mail provider, so new accounts could never be verified.
+      disableSignUp: demo !== null,
       requireEmailVerification: true, // BR-AUTH-002
       minPasswordLength: PASSWORD_MIN_LENGTH, // BR-AUTH-001
       maxPasswordLength: PASSWORD_MAX_LENGTH,
@@ -91,7 +104,7 @@ function createAuth() {
       },
       // BR-AUTH-003: the sign-up response is identical; the owner of the address is told instead.
       onExistingUserSignUp: async ({ user }) => {
-        const mail = emailTemplates.existing({ name: user.name, url: `${publicEnv.appUrl}/login` });
+        const mail = emailTemplates.existing({ name: user.name, url: `${url}/login` });
         await sendEmail({ to: user.email, ...mail, kind: "existing_account" });
       },
     },
@@ -149,6 +162,24 @@ function createAuth() {
           },
         },
       },
+    },
+    hooks: {
+      // The shared demo account stays usable for everyone (security standard: checks on the server).
+      before: createAuthMiddleware(async (ctx) => {
+        if (!demo) return;
+        if (ctx.path === "/request-password-reset") {
+          const email = (ctx.body as { email?: unknown } | undefined)?.email;
+          if (typeof email === "string" && email.toLowerCase() === demo.email.toLowerCase()) {
+            throw new APIError("FORBIDDEN", { message: "DEMO_READ_ONLY", code: "DEMO_READ_ONLY" });
+          }
+          return;
+        }
+        if (!DEMO_PROTECTED_PATHS.has(ctx.path)) return;
+        const session = await getSessionFromCtx(ctx);
+        if (session?.user.email.toLowerCase() === demo.email.toLowerCase()) {
+          throw new APIError("FORBIDDEN", { message: "DEMO_READ_ONLY", code: "DEMO_READ_ONLY" });
+        }
+      }),
     },
     plugins: [nextCookies()],
   });

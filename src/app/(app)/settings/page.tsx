@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/page-header";
+import { demoAccount } from "@/env";
 import { SettingsPanels } from "@/features/settings/components/settings-panels";
 import { ledgerHasTransactions } from "@/features/settings/server";
 import { can } from "@/lib/permissions";
@@ -40,6 +41,7 @@ export default async function SettingsPage() {
         currencyCode={ctx.currencyCode}
         currencyLocked={currencyLocked}
         canManageLedger={can.manageLedger(ctx.role)}
+        isDemoAccount={demoAccount()?.email.toLowerCase() === ctx.email.toLowerCase()}
         timeZones={timeZones}
       />
     </>

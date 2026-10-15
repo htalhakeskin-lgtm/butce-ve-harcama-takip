@@ -17,9 +17,12 @@ import { PasswordInput } from "./password-input";
 export function LoginForm({
   notice,
   redirectTo,
+  demo,
 }: {
   notice?: "passwordChanged" | "accountDeleted";
   redirectTo: string;
+  /** Shared demo account: the form is pre-filled (demo server only). */
+  demo?: { email: string; password: string } | undefined;
 }) {
   const t = useTranslations("auth");
   const errorText = useErrorText();
@@ -55,8 +58,18 @@ export function LoginForm({
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
       {error ? <FormAlert>{error}</FormAlert> : null}
       {info ? <FormAlert tone="info">{info}</FormAlert> : null}
+      {demo ? <FormAlert tone="info">{t("demo.notice")}</FormAlert> : null}
       <Field id="email" label={t("login.email")}>
-        <Input id="email" name="email" type="email" autoComplete="email" inputMode="email" required autoFocus />
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          inputMode="email"
+          required
+          autoFocus
+          defaultValue={demo?.email}
+        />
       </Field>
       <Field id="password" label={t("login.password")}>
         <PasswordInput
@@ -64,15 +77,18 @@ export function LoginForm({
           name="password"
           autoComplete="current-password"
           required
+          defaultValue={demo?.password}
           showLabel={t("showPassword")}
           hideLabel={t("hidePassword")}
         />
       </Field>
-      <div className="-mt-1 text-right text-sm">
-        <Link href="/forgot-password" className="text-accent hover:underline">
-          {t("login.forgot")}
-        </Link>
-      </div>
+      {demo ? null : (
+        <div className="-mt-1 text-right text-sm">
+          <Link href="/forgot-password" className="text-accent hover:underline">
+            {t("login.forgot")}
+          </Link>
+        </div>
+      )}
       <Button type="submit" size="lg" loading={pending}>
         {t("login.submit")}
       </Button>

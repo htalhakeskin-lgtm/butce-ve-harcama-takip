@@ -116,7 +116,12 @@
       "breached": "Bu şifre daha önce bir veri sızıntısında görülmüş. Başka bir şifre seçin."
     },
     "showPassword": "Şifreyi göster",
-    "hidePassword": "Şifreyi gizle"
+    "hidePassword": "Şifreyi gizle",
+    "demo": {
+      "notice": "Bu bir demodur. Deneme hesabının bilgileri aşağıda hazır; “Giriş yap”a basmanız yeterli.",
+      "registerClosed": "Demo sürümünde yeni hesap açılamaz. Hazır deneme hesabıyla giriş yapabilirsiniz.",
+      "goToLogin": "Deneme hesabıyla giriş yap"
+    }
   },
   "errors": {
     "validation": "Bazı alanlar hatalı. İşaretli alanları düzeltin.",
@@ -158,7 +163,8 @@
     "BR-CAT-004-hasChildren": "Alt kategorileri olan bir kategori silinemez veya birleştirilemez. Önce alt kategorileri taşıyın.",
     "BR-CAT-004-sameTarget": "Bir kategori kendisiyle birleştirilemez.",
     "BR-BUD-001": "Bütçe tutarı 0'dan büyük olmalı.",
-    "BR-LDG-005": "Defterde işlem varken para birimi değiştirilemez."
+    "BR-LDG-005": "Defterde işlem varken para birimi değiştirilemez.",
+    "demoReadOnly": "Bu demo hesabında şifre, e-posta ve ad değiştirilemez; hesap silinemez."
   },
   "emails": {
     "footer": "Bu e-postayı {appName} hesabınızla ilgili bir işlem yapıldığı için aldınız.",
@@ -453,7 +459,8 @@
     "deleteBody": "Hesabınız, kişisel defteriniz ve tüm verileriniz kalıcı olarak silinir. Bu işlem geri alınamaz. Silmeden önce verilerinizi indirmenizi öneririz.",
     "deleteConfirmLabel": "Tüm verilerimin kalıcı olarak silineceğini anlıyorum.",
     "deleteAction": "Hesabımı kalıcı olarak sil",
-    "passwordRequired": "Devam etmek için şifrenizi girin."
+    "passwordRequired": "Devam etmek için şifrenizi girin.",
+    "demoLocked": "Bu demo hesabında şifre, e-posta ve ad değiştirilemez; hesap silinemez. Diğer ayarları deneyebilirsiniz."
   },
   "legal": {
     "privacyTitle": "Aydınlatma metni",
@@ -484,5 +491,8 @@
     "indigo": "Çivit",
     "violet": "Mor",
     "pink": "Pembe"
+  },
+  "demo": {
+    "banner": "Demo sürümü · Gördüğünüz veriler örnektir ve diğer ziyaretçilerle ortaktır."
   }
 }

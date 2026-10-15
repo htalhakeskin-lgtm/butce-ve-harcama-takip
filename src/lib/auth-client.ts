@@ -26,6 +26,8 @@ export function authErrorCode(error: {
       return "BR-PRV-001";
     case "BR-AUTH-012":
       return "BR-AUTH-012";
+    case "DEMO_READ_ONLY":
+      return "demoReadOnly";
     case "INVALID_EMAIL":
       return "invalidEmail";
     default:

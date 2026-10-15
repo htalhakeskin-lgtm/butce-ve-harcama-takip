@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
+import { demoAccount } from "@/env";
 import { AuthCard } from "@/features/auth/auth-card";
 import { LoginForm } from "@/features/auth/login-form";
 import { getSessionUser } from "@/server/context";
@@ -24,20 +25,23 @@ export default async function LoginPage({
   if (await getSessionUser()) redirect(safeRedirect(params.next));
   const t = await getTranslations("auth.login");
   const notice = params.notice === "passwordChanged" || params.notice === "accountDeleted" ? params.notice : undefined;
+  const demo = demoAccount() ?? undefined;
   return (
     <AuthCard
       title={t("title")}
       subtitle={t("subtitle")}
       footer={
-        <>
-          {t("noAccount")}{" "}
-          <Link href="/register" className="font-medium text-accent hover:underline">
-            {t("register")}
-          </Link>
-        </>
+        demo ? null : (
+          <>
+            {t("noAccount")}{" "}
+            <Link href="/register" className="font-medium text-accent hover:underline">
+              {t("register")}
+            </Link>
+          </>
+        )
       }
     >
-      <LoginForm redirectTo={safeRedirect(params.next)} {...(notice ? { notice } : {})} />
+      <LoginForm redirectTo={safeRedirect(params.next)} demo={demo} {...(notice ? { notice } : {})} />
     </AuthCard>
   );
 }

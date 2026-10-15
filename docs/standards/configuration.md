@@ -23,7 +23,7 @@ Ortam doğrulaması derlemede; `.env.example` ile `env.ts`'in eşleştiğini den
 
 ## 4. Uygulamadaki durum
 
-Uygulanan ortam değişkenleri: `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `EMAIL_TRANSPORT` (`file` / `resend`), `EMAIL_FROM`, `RESEND_API_KEY`, `CRON_SECRET`. Yalnızca test ortamında kullanılan anahtarlar: `AUTH_RATE_LIMIT=off`, `PASSWORD_BREACH_CHECK=off`. Doğrulama `src/env.ts`'tedir; örnek değerler `.env.example`'dadır.
+Uygulanan ortam değişkenleri: `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `EMAIL_TRANSPORT` (`file` / `resend`), `EMAIL_FROM`, `RESEND_API_KEY`, `CRON_SECRET`. Çalışma anında okunan adres: `APP_URL` (derleme anında sabitlenen `NEXT_PUBLIC_APP_URL`'i geçersiz kılar; adresi her başlatmada değişen demo tüneli için). Demo sunucusu: `DEMO_ACCOUNT_EMAIL`, `DEMO_ACCOUNT_PASSWORD` (giriş sayfasında gösterilir, yeni kaydı kapatır, bu hesabın şifre/e-posta/ad değişikliğini ve silinmesini engeller). Yalnızca test ortamında kullanılan anahtarlar: `AUTH_RATE_LIMIT=off`, `PASSWORD_BREACH_CHECK=off`. Doğrulama `src/env.ts`'tedir; örnek değerler `.env.example`'dadır.
 
 ## Değişiklik kaydı
 

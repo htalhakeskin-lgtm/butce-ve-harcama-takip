@@ -4,5 +4,6 @@ src/server/db/migrations/
 standards_ornek/
 .next/
 .next-e2e/
+.next-demo/
 playwright-report/
 test-results/

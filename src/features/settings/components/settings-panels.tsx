@@ -29,6 +29,8 @@ type Props = {
   currencyLocked: boolean;
   canManageLedger: boolean;
   timeZones: string[];
+  /** Shared demo account: profile, password and deletion are locked (server-enforced too). */
+  isDemoAccount: boolean;
 };
 
 function Section({ title, children, id }: { title: string; children: ReactNode; id: string }) {
@@ -46,17 +48,25 @@ export function SettingsPanels(props: Props) {
   const t = useTranslations("settings");
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <Section id="profile" title={t("profile")}>
-        <ProfileForm name={props.name} email={props.email} />
-      </Section>
-      <Section id="security" title={t("security")}>
-        <PasswordForm />
-      </Section>
+      {props.isDemoAccount ? (
+        <p role="note" className="rounded-lg bg-info-soft px-4 py-3 text-sm text-info lg:col-span-2">
+          {t("demoLocked")}
+        </p>
+      ) : (
+        <>
+          <Section id="profile" title={t("profile")}>
+            <ProfileForm name={props.name} email={props.email} />
+          </Section>
+          <Section id="security" title={t("security")}>
+            <PasswordForm />
+          </Section>
+        </>
+      )}
       <Section id="preferences" title={t("preferences")}>
         <PreferencesForm {...props} />
       </Section>
       <Section id="data" title={t("data")}>
-        <DataPanel />
+        <DataPanel allowDelete={!props.isDemoAccount} />
       </Section>
     </div>
   );
@@ -268,7 +278,7 @@ function PreferencesForm({ theme, timeZone, currencyCode, currencyLocked, canMan
   );
 }
 
-function DataPanel() {
+function DataPanel({ allowDelete }: { allowDelete: boolean }) {
   const t = useTranslations("settings");
   const ta = useTranslations("auth");
   const errorText = useErrorText();
@@ -337,33 +347,35 @@ function DataPanel() {
         </Button>
       </form>
 
-      <form onSubmit={deleteAccount} className="flex flex-col gap-3 rounded-lg border border-danger/40 p-4">
-        <h3 className="font-semibold text-danger">{t("deleteTitle")}</h3>
-        <p className="text-sm text-muted-foreground">{t("deleteBody")}</p>
-        <Field id="delete-password" label={t("currentPassword")}>
-          <PasswordInput
-            id="delete-password"
-            autoComplete="current-password"
-            value={deletePassword}
-            onChange={(e) => setDeletePassword(e.target.value)}
-            showLabel={ta("showPassword")}
-            hideLabel={ta("hidePassword")}
-          />
-        </Field>
-        <label className="flex items-start gap-3 text-sm">
-          <Checkbox checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} className="mt-0.5" />
-          {t("deleteConfirmLabel")}
-        </label>
-        <Button
-          type="submit"
-          variant="danger"
-          className="self-start"
-          disabled={!confirmed}
-          loading={pending === "delete"}
-        >
-          <Trash2 /> {t("deleteAction")}
-        </Button>
-      </form>
+      {allowDelete ? (
+        <form onSubmit={deleteAccount} className="flex flex-col gap-3 rounded-lg border border-danger/40 p-4">
+          <h3 className="font-semibold text-danger">{t("deleteTitle")}</h3>
+          <p className="text-sm text-muted-foreground">{t("deleteBody")}</p>
+          <Field id="delete-password" label={t("currentPassword")}>
+            <PasswordInput
+              id="delete-password"
+              autoComplete="current-password"
+              value={deletePassword}
+              onChange={(e) => setDeletePassword(e.target.value)}
+              showLabel={ta("showPassword")}
+              hideLabel={ta("hidePassword")}
+            />
+          </Field>
+          <label className="flex items-start gap-3 text-sm">
+            <Checkbox checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} className="mt-0.5" />
+            {t("deleteConfirmLabel")}
+          </label>
+          <Button
+            type="submit"
+            variant="danger"
+            className="self-start"
+            disabled={!confirmed}
+            loading={pending === "delete"}
+          >
+            <Trash2 /> {t("deleteAction")}
+          </Button>
+        </form>
+      ) : null}
     </div>
   );
 }

@@ -20,7 +20,8 @@
     "db:check": "drizzle-kit check",
     "db:migrate": "tsx scripts/migrate.ts",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm test:integration",
-    "db:seed": "tsx --conditions=react-server scripts/seed-demo.ts"
+    "db:seed": "tsx --conditions=react-server scripts/seed-demo.ts",
+    "demo:share": "node scripts/demo-share.mjs"
   },
   "dependencies": {
     "@date-fns/tz": "1.5.0",

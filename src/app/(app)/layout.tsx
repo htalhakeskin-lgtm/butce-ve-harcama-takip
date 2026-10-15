@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { AppShell } from "@/components/app-shell";
 import { LedgerProvider } from "@/components/ledger-context";
-import { publicEnv } from "@/env";
+import { demoAccount, publicEnv } from "@/env";
 import { listAccounts } from "@/features/accounts/server";
 import { listCategories } from "@/features/categories/server";
 import { TransactionDialogProvider } from "@/features/transactions/components/transaction-dialog";
@@ -35,7 +35,13 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <TransactionDialogProvider
         data={{ accounts, categories, recent: { expense: recentExpense, income: recentIncome }, defaultAccountId }}
       >
-        <AppShell appName={publicEnv.appName} userName={ctx.userName} email={ctx.email} theme={ctx.theme}>
+        <AppShell
+          demo={demoAccount() !== null}
+          appName={publicEnv.appName}
+          userName={ctx.userName}
+          email={ctx.email}
+          theme={ctx.theme}
+        >
           {children}
         </AppShell>
       </TransactionDialogProvider>
