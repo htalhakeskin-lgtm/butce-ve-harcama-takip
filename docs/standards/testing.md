@@ -34,8 +34,8 @@ CI'daki test işleri; kapsam raporu; izlenebilirlik betiği.
 
 ## 4. Uygulamadaki durum
 
-- Faz 1 sonunda: 57 birim, 34 entegrasyon, 2 uçtan uca senaryo (masaüstü ve telefon) ve axe taraması.
-- Uçtan uca testler yerelde çalışan geliştirme sunucusunu kullanır; CI'da üretim derlemesine karşı çalışır.
+- Faz 1 sonunda: 63 birim, 34 entegrasyon ve 6 uçtan uca test (S1 demo senaryosu masaüstü ve telefonda; şifre sıfırlama; veri indirme ve hesap silme; kategori yönetimi; axe taraması).
+- Uçtan uca testler her zaman kendi üretim sunucusunda (port 3100) ve test anahtarlarıyla (`AUTH_RATE_LIMIT=off`, `PASSWORD_BREACH_CHECK=off`, `EMAIL_TRANSPORT=file`) çalışır. Geliştirme sunucusu paylaşılmaz: paylaşıldığında kayıt hız sınırı testleri rastgele düşürüyordu.
 
 ## Değişiklik kaydı
 

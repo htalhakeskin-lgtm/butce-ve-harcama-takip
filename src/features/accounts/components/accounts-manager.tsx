@@ -2,7 +2,6 @@
 
 import { Archive, ArchiveRestore, ArrowDown, ArrowUp, List, MoreVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
@@ -13,6 +12,7 @@ import { EmptyState } from "@/components/empty-state";
 import { useLedger } from "@/components/ledger-context";
 import { MoneyText } from "@/components/money-text";
 import { Badge } from "@/components/ui/badge";
+import { UrlToggle } from "@/components/url-toggle";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -48,7 +48,6 @@ export function AccountsManager({ accounts, showArchived }: { accounts: AccountV
   const t = useTranslations("accounts");
   const tc = useTranslations("common");
   const errorText = useErrorText();
-  const router = useRouter();
   const { role } = useLedger();
   const canEdit = can.edit(role);
   const [editing, setEditing] = useState<Editing | null>(null);
@@ -81,13 +80,7 @@ export function AccountsManager({ accounts, showArchived }: { accounts: AccountV
   return (
     <>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <label className="flex items-center gap-2 text-sm">
-          <Checkbox
-            checked={showArchived}
-            onChange={() => router.push(showArchived ? "/accounts" : "/accounts?archived=1")}
-          />
-          {t("showArchived")}
-        </label>
+        <UrlToggle checked={showArchived} label={t("showArchived")} hrefOn="/accounts?archived=1" hrefOff="/accounts" />
         {canEdit ? (
           <Button onClick={() => setEditing({ mode: "create" })}>
             <Plus /> {t("add")}

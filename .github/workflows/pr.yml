@@ -60,7 +60,7 @@ jobs:
     env:
       DATABASE_URL: postgres://butce:butce@localhost:5432/butce
       BETTER_AUTH_SECRET: ci-only-secret-ci-only-secret-ci-only-secret
-      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3100
       NEXT_PUBLIC_APP_NAME: Bütçe
       EMAIL_TRANSPORT: file
       EMAIL_FROM: "Bütçe <no-reply@example.com>"

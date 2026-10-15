@@ -1,11 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * End-to-end tests (testing standard). Locally they reuse a running server on :3000;
- * in CI they start the production build with test-only switches:
+ * End-to-end tests (testing standard). They run against their own production server on :3100,
+ * never the development server, with test-only switches:
  * AUTH_RATE_LIMIT=off, PASSWORD_BREACH_CHECK=off, EMAIL_TRANSPORT=file.
+ * Locally the server is built on first run and reused while it stays up.
  */
-const PORT = Number(process.env.E2E_PORT ?? 3000);
+const PORT = Number(process.env.E2E_PORT ?? 3100);
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -28,14 +29,15 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Pixel 7"], viewport: { width: 390, height: 844 } } },
   ],
   webServer: {
-    command: process.env.CI ? "pnpm start" : "pnpm dev",
+    command: process.env.CI ? `pnpm start --port ${PORT}` : `pnpm build && pnpm start --port ${PORT}`,
     port: PORT,
     reuseExistingServer: !process.env.CI,
-    timeout: 180_000,
+    timeout: 300_000,
     env: {
       AUTH_RATE_LIMIT: "off",
       PASSWORD_BREACH_CHECK: "off",
       EMAIL_TRANSPORT: "file",
+      NEXT_PUBLIC_APP_URL: `http://localhost:${PORT}`,
     },
   },
 });

@@ -57,7 +57,7 @@ Uygulama http://localhost:3000 adresinde açılır. Yerelde e-postalar gönderil
 | `pnpm typecheck` · `pnpm lint` · `pnpm format` | Tip denetimi, lint, biçimleme |
 | `pnpm test` | Birim ve bileşen testleri |
 | `pnpm test:integration` | Gerçek PostgreSQL ile entegrasyon testleri (Docker gerekir, Testcontainers kendi veritabanını açar) |
-| `pnpm test:e2e` | Uçtan uca testler (S1 demo senaryosu, masaüstü ve telefon); çalışan sunucuyu kullanır |
+| `pnpm test:e2e` | Uçtan uca testler (S1 demo senaryosu, hesap akışları, kategoriler, erişilebilirlik; masaüstü ve telefon). Test ayarlarıyla kendi üretim sunucusunu 3100 portunda derleyip başlatır; geliştirme sunucusunu etkilemez |
 | `pnpm check` | CI'daki kontrollerin uçtan uca testler dışındaki hepsi |
 | `pnpm db:generate` | Şema değişikliğinden migration üretir (`src/server/db/migrations/`) |
 | `pnpm db:migrate` | Migration'ları `DATABASE_URL`'deki veritabanına uygular |

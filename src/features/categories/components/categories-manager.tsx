@@ -13,7 +13,6 @@ import {
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
@@ -24,6 +23,7 @@ import { EmptyState } from "@/components/empty-state";
 import { ICON_NAMES, Icon } from "@/components/icon";
 import { useLedger } from "@/components/ledger-context";
 import { Badge } from "@/components/ui/badge";
+import { UrlToggle } from "@/components/url-toggle";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -35,7 +35,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { describedBy, Field } from "@/components/ui/field";
-import { Checkbox, Input, Select } from "@/components/ui/input";
+import { Input, Select } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
 import type { CategoryKind, PaletteColor } from "@/lib/domain-constants";
 import { newId } from "@/lib/ids";
@@ -70,7 +70,6 @@ export function CategoriesManager({
   const t = useTranslations("categories");
   const tc = useTranslations("common");
   const errorText = useErrorText();
-  const router = useRouter();
   const { role } = useLedger();
   const canEdit = can.edit(role);
   const [editing, setEditing] = useState<Editing | null>(null);
@@ -202,10 +201,12 @@ export function CategoriesManager({
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <label className="flex items-center gap-2 text-sm">
-            <Checkbox checked={showArchived} onChange={() => router.push(query(kind, !showArchived))} />
-            {t("showArchived")}
-          </label>
+          <UrlToggle
+            checked={showArchived}
+            label={t("showArchived")}
+            hrefOn={query(kind, true)}
+            hrefOff={query(kind, false)}
+          />
           {canEdit ? (
             <Button onClick={() => setEditing({ mode: "create", parentId: null })}>
               <Plus /> {t("add")}
