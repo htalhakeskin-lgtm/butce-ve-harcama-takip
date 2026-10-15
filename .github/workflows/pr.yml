@@ -66,6 +66,7 @@ jobs:
       EMAIL_FROM: "Bütçe <no-reply@example.com>"
       AUTH_RATE_LIMIT: "off"
       PASSWORD_BREACH_CHECK: "off"
+      NEXT_DIST_DIR: .next-e2e
       CI: "1"
     steps:
       - uses: actions/checkout@v4

@@ -48,6 +48,20 @@ pnpm dev
 
 Uygulama http://localhost:3000 adresinde açılır. Yerelde e-postalar gönderilmez, `.dev-mail/` klasörüne yazılır; doğrulama ve şifre sıfırlama bağlantılarını **http://localhost:3000/dev/mail** adresinden açabilirsiniz.
 
+### Deneme hesabı
+
+```bash
+pnpm db:seed
+```
+
+Doğrulanmış bir deneme hesabı ve son 6 aya yayılmış örnek veri (hesaplar, ~150 işlem, bütçeler) oluşturur. Her çalıştırmada hesabı silip baştan kurar; yalnızca yerel veritabanında çalışır.
+
+| E-posta | Şifre |
+|---|---|
+| `deneme@example.com` | `Deneme-Butce-2026` |
+
+Kendi hesabınızı açarken şifre en az 10 karakter olmalı ve bilinen veri sızıntılarında geçmemelidir (ör. `Password123!` reddedilir).
+
 ## Komutlar
 
 | Komut | Ne yapar |
@@ -61,6 +75,7 @@ Uygulama http://localhost:3000 adresinde açılır. Yerelde e-postalar gönderil
 | `pnpm check` | CI'daki kontrollerin uçtan uca testler dışındaki hepsi |
 | `pnpm db:generate` | Şema değişikliğinden migration üretir (`src/server/db/migrations/`) |
 | `pnpm db:migrate` | Migration'ları `DATABASE_URL`'deki veritabanına uygular |
+| `pnpm db:seed` | Yerel veritabanına örnek verili deneme hesabı kurar |
 
 Uçtan uca testleri ilk kez çalıştırmadan önce: `pnpm exec playwright install chromium`.
 

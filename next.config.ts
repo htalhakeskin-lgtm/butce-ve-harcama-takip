@@ -12,6 +12,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // End-to-end tests build into their own folder so they never touch a running dev server's files.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   // ADR-0014: Cache Components is off; almost every screen depends on the session.
   typedRoutes: false,
   poweredByHeader: false,

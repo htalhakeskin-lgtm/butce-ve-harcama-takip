@@ -38,6 +38,7 @@ export default defineConfig({
       PASSWORD_BREACH_CHECK: "off",
       EMAIL_TRANSPORT: "file",
       NEXT_PUBLIC_APP_URL: `http://localhost:${PORT}`,
+      NEXT_DIST_DIR: ".next-e2e",
     },
   },
 });
