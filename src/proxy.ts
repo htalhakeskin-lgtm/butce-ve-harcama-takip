@@ -5,6 +5,17 @@ import { NextResponse, type NextRequest } from "next/server";
  * Scripts need the nonce; inline style attributes stay allowed because charts and progress bars
  * set widths and colours through `style`.
  */
+/**
+ * Live preview in the portfolio (talha-keskin-site → docs/onizleme-izinleri.md): only the origins in
+ * PORTFOLIO_ORIGINS (space separated, plain https) may frame the app. Unset → 'none' as before.
+ */
+function frameAncestors(): string {
+  const origins = (process.env.PORTFOLIO_ORIGINS ?? "")
+    .split(/\s+/)
+    .filter((origin) => /^https:\/\/[a-z0-9.-]+$/i.test(origin));
+  return origins.length > 0 ? origins.join(" ") : "'none'";
+}
+
 export function proxy(request: NextRequest): NextResponse {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const isDev = process.env.NODE_ENV !== "production";
@@ -18,7 +29,7 @@ export function proxy(request: NextRequest): NextResponse {
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
+    `frame-ancestors ${frameAncestors()}`,
     ...(isDev ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
 
